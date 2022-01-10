@@ -1,17 +1,15 @@
 package kr.needon.needonbot.core.config;
 
+import kr.needon.needonbot.domain.service.PingPongService;
 import lombok.extern.java.Log;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import javax.security.auth.login.LoginException;
 
 @Log
 @Component
@@ -20,25 +18,28 @@ public class Discord implements EventListener, CommandLineRunner {
     @Value("${discord.token}")
     private String token;
 
+    public DefaultShardManagerBuilder builder;
+
     @Override
     public void run(String... args) throws Exception {
-        botConfig();
-    }
 
-    public void botConfig() throws LoginException, InterruptedException {
-        // Note: It is important to register your ReadyListener before building
-        JDA jda = JDABuilder.createDefault(token)
-            .addEventListeners(new Discord())
-            .build();
+        builder = DefaultShardManagerBuilder.createDefault(token);
+        builder.addEventListeners(new Discord());
+        builder.build();
+        log.info("Finished Building JDA!");
 
-        // optionally block until JDA is ready
-        jda.awaitReady();
+        PingPongService pingPongService = new PingPongService();
+        pingPongService.run(builder);
 
     }
 
     @Override
     public void onEvent(@NotNull GenericEvent event) {
-        if (event instanceof ReadyEvent)
+
+        if (event instanceof ReadyEvent) {
             log.info("Bot is Ready!");
+        }
+
+
     }
 }
