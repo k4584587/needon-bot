@@ -1,6 +1,12 @@
 server:
   port: 90
 
+discord:
+  token: OTI5OTA3MzI0MjI1NzMyNjE4.YduJrg.tJZN9K5hMe3TVZSuF1qzh45S-_Q
+  activity:
+    playing: 개발중인 봇입니다.
+
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
