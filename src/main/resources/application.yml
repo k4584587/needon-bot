@@ -1,6 +1,9 @@
 server:
   port: 90
 
+discord:
+  token:
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
