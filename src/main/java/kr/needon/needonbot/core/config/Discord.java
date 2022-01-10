@@ -2,6 +2,7 @@ package kr.needon.needonbot.core.config;
 
 import kr.needon.needonbot.domain.service.PingPongService;
 import lombok.extern.java.Log;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -18,6 +19,9 @@ public class Discord implements EventListener, CommandLineRunner {
     @Value("${discord.token}")
     private String token;
 
+    @Value("${discord.activity.playing}")
+    private String playing;
+
     public DefaultShardManagerBuilder builder;
 
     @Override
@@ -27,6 +31,9 @@ public class Discord implements EventListener, CommandLineRunner {
         builder.addEventListeners(new Discord());
         builder.build();
         log.info("Finished Building JDA!");
+
+        builder.setActivity(Activity.playing(playing));
+        builder.build();
 
         PingPongService pingPongService = new PingPongService();
         pingPongService.run(builder);
