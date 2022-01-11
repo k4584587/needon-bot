@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ND_110BotLog")
@@ -18,5 +19,10 @@ public class BotLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String calUser;
+
+    private String botName;
+
+    private LocalDateTime writeDt;
 
 }

@@ -1,13 +1,11 @@
 package kr.needon.needonbot;
 
-import org.junit.jupiter.api.Test;
+
+import lombok.extern.java.Log;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@Log
 @SpringBootTest
-class NeedonBotApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
+class NeedonBotApplicationTests  {
 
 }
