@@ -1,9 +1,6 @@
 package kr.needon.needonbot.core.config;
 
-import kr.needon.needonbot.domain.service.BotConfigService;
-import kr.needon.needonbot.domain.service.Covid19Service;
-import kr.needon.needonbot.domain.service.LogService;
-import kr.needon.needonbot.domain.service.PingPongService;
+import kr.needon.needonbot.domain.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Activity;
@@ -31,18 +28,31 @@ public class Discord implements EventListener, CommandLineRunner {
 
     private final BotConfigService botConfigService;
 
+    private final PingPongService pingPongService;
+
+    private final Covid19Service covid19Service;
+
+    private final PixivService pixivService;
+
+
     @Override
     public void run(String... args) throws Exception {
 
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
-        builder.addEventListeners(new Discord(logService, botConfigService), new PingPongService(logService), new Covid19Service(logService,botConfigService));
+        builder.addEventListeners(new Discord(logService, botConfigService, pingPongService, covid19Service, pixivService));
         log.info("Finished Building JDA!");
         builder.setActivity(Activity.playing(playing));
+
         builder.build();
+        //log.info("key : " + apiKey);
     }
 
     @Override
     public void onEvent(@NotNull GenericEvent event) {
+
+        pingPongService.onEvent(event);
+        covid19Service.onEvent(event);
+        pixivService.onEvent(event);
 
         if (event instanceof ReadyEvent) {
             log.info("Bot is Ready!");
