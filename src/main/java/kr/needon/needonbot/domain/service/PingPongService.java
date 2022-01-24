@@ -1,31 +1,27 @@
 package kr.needon.needonbot.domain.service;
 
 import kr.needon.needonbot.domain.model.BotLog;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.LoginException;
 import java.time.LocalDateTime;
 
 
 @Log
 @Service
-@RequiredArgsConstructor
 public class PingPongService extends ListenerAdapter {
 
     private final LogService logService;
 
-    public void run(DefaultShardManagerBuilder builder) throws LoginException {
-        builder.addEventListeners(new PingPongService(logService));
-        builder.build();
-        log.info("핑퐁봇 로드 완료!");
+    public PingPongService(LogService logService) {
+        this.logService = logService;
     }
 
     @Override
@@ -43,6 +39,7 @@ public class PingPongService extends ListenerAdapter {
                         log.info(author.getName() + "님이 " + "핑퐁 봇을 요청함");
                         response.editMessageFormat("퐁!: %d ms", System.currentTimeMillis() - time).queue();
                         botLog.setBotName("핑퐁");
+                        botLog.setContent("핑퐁 봇 호출");
                         botLog.setCalUser(author.getName());
                         botLog.setWriteDt(LocalDateTime.now());
                         logService.insert(botLog);
@@ -50,4 +47,8 @@ public class PingPongService extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        log.info("PingPong Bot is Ready!");
+    }
 }

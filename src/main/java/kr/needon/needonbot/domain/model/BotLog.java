@@ -23,6 +23,8 @@ public class BotLog {
 
     private String botName;
 
+    private String content;
+
     private LocalDateTime writeDt;
 
 }

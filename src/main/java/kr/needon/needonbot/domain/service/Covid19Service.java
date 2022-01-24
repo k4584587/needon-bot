@@ -1,16 +1,17 @@
 package kr.needon.needonbot.domain.service;
 
+import kr.needon.needonbot.domain.model.BotLog;
 import kr.needon.needonbot.domain.request.BotConfigRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.LoginException;
+import java.time.LocalDateTime;
 
 @Log
 @Service
@@ -24,17 +25,11 @@ public class Covid19Service extends ListenerAdapter {
     /*@Value("${api.key.covid19}")
     private String apiKey;*/
 
-    public void run(DefaultShardManagerBuilder builder) throws LoginException {
-        builder.addEventListeners(new Covid19Service(logService, botConfigService));
-        builder.build();
-        log.info("코로나 봇 로드 완료!");
-    }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         saveConfig(event); //채널 등록함수
     }
-
 
     //채널 등록함수
     public void saveConfig(MessageReceivedEvent event) {
@@ -47,7 +42,8 @@ public class Covid19Service extends ListenerAdapter {
             TextChannel textChannel = event.getTextChannel();
             if (msg.getContentRaw().equals("==covidSet")) {
                 MessageChannel channel = event.getChannel();
-
+                User author = event.getAuthor();
+                BotLog botLog = new BotLog();
 
                 log.info("코로나 채널 설정 등록");
 
@@ -55,19 +51,30 @@ public class Covid19Service extends ListenerAdapter {
                 request.setServerName(guild.getName());
                 request.setChannelName(textChannel.getName());
 
+                botLog.setBotName("Covid19");
+                botLog.setCalUser(author.getName());
+                botLog.setWriteDt(LocalDateTime.now());
+
                 if(botConfigService.searchConfig(request).size() == 0) { //등록시 중복확인
+                    botLog.setContent("Covid19 봇 채널 정상 등록");
 
                     botConfigService.insertBotConfig(request);
                     channel.sendMessage("[!] 코로나 봇 채널 설정이 완료 되었습니다.").queue();
 
                 } else {
                     log.warning("채널 등록 중복이 감지됨");
+                    botLog.setContent("Covid19 봇 채널 등록 중복 발생");
                     channel.sendMessage("[!] 이미 이 채널에 코로나 봇 설정이 등록되여 있습니다.").queue();
 
                 }
 
+                logService.insert(botLog);
             }
         }
     }
 
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        log.info("Covid19 Bot is Ready!");
+    }
 }

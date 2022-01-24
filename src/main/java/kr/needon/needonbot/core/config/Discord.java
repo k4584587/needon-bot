@@ -27,8 +27,6 @@ public class Discord implements EventListener, CommandLineRunner {
     @Value("${discord.activity.playing}")
     private String playing;
 
-    public DefaultShardManagerBuilder builder;
-
     private final LogService logService;
 
     private final BotConfigService botConfigService;
@@ -36,20 +34,11 @@ public class Discord implements EventListener, CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        builder = DefaultShardManagerBuilder.createDefault(token);
-        builder.addEventListeners(new Discord(logService, botConfigService));
-        builder.build();
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
+        builder.addEventListeners(new Discord(logService, botConfigService), new PingPongService(logService), new Covid19Service(logService,botConfigService));
         log.info("Finished Building JDA!");
-
         builder.setActivity(Activity.playing(playing));
         builder.build();
-
-        PingPongService pingPongService = new PingPongService(logService);
-        Covid19Service covid19Service = new Covid19Service(logService, botConfigService);
-
-        pingPongService.run(builder); //핑퐁봇
-        covid19Service.run(builder); //확진자 봇
-
     }
 
     @Override
@@ -58,7 +47,6 @@ public class Discord implements EventListener, CommandLineRunner {
         if (event instanceof ReadyEvent) {
             log.info("Bot is Ready!");
         }
-
 
     }
 }
