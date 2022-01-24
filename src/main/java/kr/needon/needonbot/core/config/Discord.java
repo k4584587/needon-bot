@@ -44,7 +44,6 @@ public class Discord implements EventListener, CommandLineRunner {
         builder.setActivity(Activity.playing(playing));
 
         builder.build();
-        //log.info("key : " + apiKey);
     }
 
     @Override
