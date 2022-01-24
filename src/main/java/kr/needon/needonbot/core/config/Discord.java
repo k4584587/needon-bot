@@ -2,6 +2,9 @@ package kr.needon.needonbot.core.config;
 
 import kr.needon.needonbot.domain.service.*;
 import lombok.RequiredArgsConstructor;
+import kr.needon.needonbot.domain.service.LogService;
+import kr.needon.needonbot.domain.service.PingPongService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.GenericEvent;

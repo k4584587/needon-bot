@@ -3,6 +3,9 @@ server:
 
 discord:
   token:
+  activity:
+    playing: 개발중인 봇입니다.
+
 
 spring:
   datasource:

@@ -1,6 +1,7 @@
 package kr.needon.needonbot.domain.service;
 
 import kr.needon.needonbot.domain.model.BotLog;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -16,13 +17,10 @@ import java.time.LocalDateTime;
 
 @Log
 @Service
+@RequiredArgsConstructor
 public class PingPongService extends ListenerAdapter {
 
     private final LogService logService;
-
-    public PingPongService(LogService logService) {
-        this.logService = logService;
-    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
