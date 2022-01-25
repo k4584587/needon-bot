@@ -95,7 +95,7 @@ public class Covid19Service extends ListenerAdapter {
                 botLog.setWriteDt(LocalDateTime.now());
                 botLog.setContent("확진자 봇 호출");
 
-                String totalCaseBefore = formatDateTime + "일 기준 총 확진자 : " + getCovidAPI().get("TotalCaseBefore") + "명"; //총확진자 json 파싱
+                String totalCaseBefore = getCovidAPI().get("updateTime") + " 총 확진자 : " + getCovidAPI().get("TotalCaseBefore") + "명"; //총확진자 json 파싱
                 channel.sendMessage(totalCaseBefore).queue(); //메세지 전송
                 log.info(totalCaseBefore);
                 logService.insert(botLog);
