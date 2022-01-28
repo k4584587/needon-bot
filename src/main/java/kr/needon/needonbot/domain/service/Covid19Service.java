@@ -38,6 +38,7 @@ public class Covid19Service extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         try {
             saveConfig(event); //채널 등록함수
+            callCovid(event); //수동 확진자 요청 함수
         } catch (IOException | URISyntaxException | ParseException e) {
             e.printStackTrace();
         }
@@ -81,27 +82,35 @@ public class Covid19Service extends ListenerAdapter {
                 }
                 logService.insert(botLog);
 
-            } else if (msg.getContentRaw().equals("!확진자")) {
-                User author = event.getAuthor();
-                BotLog botLog = new BotLog();
-
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formatDateTime = now.format(formatter);
-
-                //로그 insert
-                botLog.setBotName("Covid19");
-                botLog.setCalUser(author.getName());
-                botLog.setWriteDt(LocalDateTime.now());
-                botLog.setContent("확진자 봇 호출");
-
-                String totalCaseBefore = getCovidAPI().get("updateTime") + " 총 확진자 : " + getCovidAPI().get("TotalCaseBefore") + "명"; //총확진자 json 파싱
-                channel.sendMessage(totalCaseBefore).queue(); //메세지 전송
-                log.info(totalCaseBefore);
-                logService.insert(botLog);
             }
         }
     }
+
+    public void callCovid(MessageReceivedEvent event) throws IOException, URISyntaxException, ParseException {
+        MessageChannel channel = event.getChannel();
+        Message msg = event.getMessage();
+
+        if (msg.getContentRaw().equals("!확진자")) {
+            User author = event.getAuthor();
+            BotLog botLog = new BotLog();
+
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formatDateTime = now.format(formatter);
+
+            //로그 insert
+            botLog.setBotName("Covid19");
+            botLog.setCalUser(author.getName());
+            botLog.setWriteDt(LocalDateTime.now());
+            botLog.setContent("확진자 봇 호출");
+
+            String totalCaseBefore = getCovidAPI().get("updateTime") + " 총 확진자 : " + getCovidAPI().get("TotalCaseBefore") + "명"; //총확진자 json 파싱
+            channel.sendMessage(totalCaseBefore).queue(); //메세지 전송
+            log.info(totalCaseBefore);
+            logService.insert(botLog);
+        }
+    }
+
 
     public JSONObject getCovidAPI() throws URISyntaxException, IOException, ParseException {
         APICall apiCall = new APICall();

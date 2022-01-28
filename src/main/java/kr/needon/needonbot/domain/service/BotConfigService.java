@@ -21,15 +21,19 @@ public class BotConfigService {
         return botConfigRepository.findAllByBotNameAndChannelName(request.getBotName(), request.getChannelName());
     }
 
+    public BotConfig getBotConfig(String serverName, String botName) {
+        return botConfigRepository.findByBotNameAndServerName(botName, serverName).orElseThrow(() -> new RuntimeException("데이터를 찾을수 없습니다."));
+    }
+
     public void insertBotConfig(BotConfigRequest request) {
 
-            BotConfig botConfig = new BotConfig();
+        BotConfig botConfig = new BotConfig();
 
-            botConfig.setBotName(request.getBotName());
-            botConfig.setChannelName(request.getChannelName());
-            botConfig.setServerName(request.getServerName());
-            botConfig.setWriteDt(LocalDateTime.now());
-            botConfigRepository.save(botConfig);
+        botConfig.setBotName(request.getBotName());
+        botConfig.setChannelName(request.getChannelName());
+        botConfig.setServerName(request.getServerName());
+        botConfig.setWriteDt(LocalDateTime.now());
+        botConfigRepository.save(botConfig);
 
     }
 
