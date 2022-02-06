@@ -6,11 +6,15 @@ discord:
   activity:
     playing: 개발중인 봇입니다.
 
+api:
+  key:
+    covid:
+
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
+    url: jdbc:mysql://needon.kr/admin_discord?useUnicode=true&characterEncoding=utf-8
     username:
     password:
 
